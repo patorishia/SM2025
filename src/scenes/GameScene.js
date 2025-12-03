@@ -5,16 +5,44 @@ export class GameScene extends Phaser.Scene {
     }
 
     preload() {
+        // Imagens
         this.load.image('background', 'assets/images/spaceBase.png');
         this.load.image('finishLine', 'assets/images/finishLine.png');
 
+        // Spritesheets
         this.load.spritesheet('ship', 'assets/sprites/ship.png', { frameWidth: 16, frameHeight: 24 });
         this.load.spritesheet('asteroid', 'assets/sprites/asteroid.png', { frameWidth: 128, frameHeight: 128 });
         this.load.spritesheet('fuel', 'assets/sprites/star.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('explosion', 'assets/sprites/explosion.png', { frameWidth: 16, frameHeight: 16 });
+
+
+        // Sons 
+        this.load.audio('fuelSound', 'assets/audio/fuel.wav');
+        this.load.audio('explosionSound', 'assets/audio/explosion.mp3');
+        this.load.audio('countdownSound', 'assets/audio/321.wav');
+        this.load.audio('winSound', 'assets/audio/win1.wav');
+        this.load.audio('gameOverSound', 'assets/audio/gameOver.mp3');
+        this.load.audio('rocketSound', 'assets/audio/rocket.wav');
+        this.load.audio('loseSound', 'assets/audio/fire.mp3');
+        this.load.audio('backgroundMusic', 'assets/audio/bck.mp3');
+
+
+
     }
 
     create() {
+
+        // Sons
+        this.fuelSound = this.sound.add('fuelSound');
+        this.explosionSound = this.sound.add('explosionSound');
+        this.countdownSound = this.sound.add('countdownSound');
+        this.winSound = this.sound.add('winSound');
+        this.gameOverSound = this.sound.add('gameOverSound');
+        this.rocketSound = this.sound.add('rocketSound');
+        this.loseSound = this.sound.add('loseSound');
+        this.backgroundMusic = this.sound.add('backgroundMusic', { loop: true, volume: 0.7 });
+
+
         const width = this.sys.game.config.width;
         const height = this.sys.game.config.height;
 
@@ -101,12 +129,14 @@ export class GameScene extends Phaser.Scene {
         this.timerText = this.add.text(16, 28, 'Time: 0', { fontSize: '12px', fill: '#fff' });
 
         // Progress bar
-        this.progressLabel = this.add.text(width / 2, 5, 'Progress', { fontSize: '12px', fill: '#fff' }).setOrigin(0.5, 0);
+        this.progressLabel = this.add.text(width / 2, 5, 'Race Progress', { fontSize: '12px', fill: '#fff' }).setOrigin(0.5, 0);
         this.progressBox = this.add.graphics();
         this.progressBox.fillStyle(0x222222, 0.8);
         this.progressBox.fillRect(width / 2 - 75, 20, 150, 8);
 
         this.progressBar = this.add.graphics();
+
+
     }
 
     update() {
@@ -153,6 +183,7 @@ export class GameScene extends Phaser.Scene {
                 this.ship.play('idle', true);
             }
 
+
             this.fuelLevel -= 0.05;
             if (this.fuelLevel <= 0) {
                 this.fuelLevel = 0;
@@ -195,8 +226,10 @@ export class GameScene extends Phaser.Scene {
     }
 
     startCountdown() {
+        this.countdownSound.play();
         let countdown = 3;
         this.startText.setText(countdown);
+
 
         const timer = this.time.addEvent({
             delay: 1000,
@@ -209,6 +242,7 @@ export class GameScene extends Phaser.Scene {
                     this.time.delayedCall(500, () => {
                         this.startText.setVisible(false);
                         this.startGame();
+                        this.rocketSound.play({ volume: 1.0 });
                     });
                     timer.remove();
                 }
@@ -229,12 +263,15 @@ export class GameScene extends Phaser.Scene {
                 this.backgroundMoving = true;
                 this.asteroidTimer.paused = false;
                 this.fuelTimer.paused = false;
+                this.backgroundMusic.play();
+
             }
         });
     }
 
     hitAsteroid(ship, asteroid) {
         asteroid.destroy();
+        this.loseSound.play();
 
         this.updateScore(-50);
         this.lives--;
@@ -255,6 +292,7 @@ export class GameScene extends Phaser.Scene {
 
     collectFuel(ship, fuel) {
         this.updateScore(20);
+        this.fuelSound.play();
 
         this.ship.setTint(0x00ff00);
         this.time.delayedCall(200, () => this.ship.clearTint());
@@ -299,8 +337,8 @@ export class GameScene extends Phaser.Scene {
         this.fuelBar.clear();
 
         let color = this.fuelLevel > 60 ? 0x00ff00 :
-                    this.fuelLevel > 30 ? 0xffff00 :
-                                         0xff0000;
+            this.fuelLevel > 30 ? 0xffff00 :
+                0xff0000;
 
         this.fuelBar.fillStyle(color, 1);
         this.fuelBar.fillRect(this.sys.game.config.width - 130, 20, 120 * value, 8);
@@ -319,6 +357,9 @@ export class GameScene extends Phaser.Scene {
 
     gameOver() {
         this.ship.setVelocityY(300);
+        this.gameOverSound.play();
+        this.backgroundMusic.stop();
+
 
         this.time.delayedCall(1500, () => {
             this.scene.start('GameOverScene', {
@@ -335,18 +376,18 @@ export class GameScene extends Phaser.Scene {
         const explosion = this.add.sprite(this.ship.x, this.ship.y, 'explosion');
         explosion.setScale(5);
         explosion.play('explode');
+        this.explosionSound.play();
 
         this.ship.setVisible(false);
 
-        this.time.delayedCall(1000, () => {
-            this.scene.start('GameOverScene', {
-                score: this.score,
-                time: this.lastElapsed
-            });
-        });
+        //game over após explosão com funcao gameOver()
+        this.gameOver();
+
+
     }
 
     reachFinish() {
+
         this.backgroundMoving = false;
         this.ship.setVelocity(0);
 
@@ -359,7 +400,10 @@ export class GameScene extends Phaser.Scene {
             this.scene.start('WinScene', {
                 score: this.score,
                 time: this.lastElapsed
+
             });
+            this.winSound.play();
+            this.backgroundMusic.stop();
         });
     }
 }
