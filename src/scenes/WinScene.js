@@ -1,6 +1,6 @@
-export class GameOverScene extends Phaser.Scene {
+export class WinScene extends Phaser.Scene {
     constructor() {
-        super('GameOverScene');
+        super('WinScene');
     }
 
     create(data) {
@@ -8,9 +8,9 @@ export class GameOverScene extends Phaser.Scene {
         const height = this.sys.game.config.height;
 
         // Título
-        this.add.text(width / 2, height / 2 - 200, 'GAME OVER', {
+        this.add.text(width / 2, height / 2 - 200, 'YOU WIN!', {
             fontSize: '40px',
-            fill: '#ff0000'
+            fill: '#00ff00'
         }).setOrigin(0.5);
 
         // Score
