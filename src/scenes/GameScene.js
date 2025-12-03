@@ -138,6 +138,7 @@ export class GameScene extends Phaser.Scene {
 
         // Score e timer
         this.score = 0;
+        this.lastElapsed = 0; // inicializa o tempo decorrido
         this.scoreText = this.add.text(16, 10, 'Score: 0', { fontSize: '12px', fill: '#fff' });
         this.startTime = 0; // só começa quando o jogo inicia
         this.timerText = this.add.text(16, 28, 'Time: 0', { fontSize: '12px', fill: '#fff' });
@@ -151,12 +152,22 @@ export class GameScene extends Phaser.Scene {
     }
 
     update() {
-        // Atualiza timer só se o jogo começou
+
+        // Timer e pontuação
         if (this.gameStarted) {
+
+            // Timer
             if (!this.startTime) this.startTime = this.time.now;
             let elapsed = Math.floor((this.time.now - this.startTime) / 1000);
             this.timerText.setText('Time: ' + elapsed);
+
+            // Pontos por sobrevivência (1 por segundo)
+            if (elapsed > this.lastElapsed) {
+                this.updateScore(1);
+                this.lastElapsed = elapsed;
+            }
         }
+
 
         // Atualiza progresso
         if (this.backgroundMoving) {
@@ -191,10 +202,17 @@ export class GameScene extends Phaser.Scene {
             }
         }
 
-        // Remove asteroides fora da tela
         this.asteroids.children.each((asteroid) => {
-            if (asteroid.y > this.sys.game.config.height + 50) asteroid.destroy();
-        });
+            // verifica se o objecto existe e está ativo antes de trabalhar com ele
+            if (asteroid && asteroid.active && asteroid.y > this.sys.game.config.height + 50) {
+                asteroid.destroy();
+
+                // só dá pontos se o jogo já começou
+                if (this.gameStarted) {
+                    this.avoidAsteroid();
+                }
+            }
+        }, this);
 
         // Cor da fuel bar
         let color = this.fuelLevel > 60 ? 0x00ff00 : this.fuelLevel > 30 ? 0xffff00 : 0xff0000;
@@ -207,27 +225,48 @@ export class GameScene extends Phaser.Scene {
         }
     }
 
-    hitAsteroid(ship, asteroid) {
-        asteroid.destroy();
-        this.lives--;
-        this.livesText.setText('❤️'.repeat(this.lives));
-        this.ship.setTint(0xff0000);
-        this.time.delayedCall(200, () => { this.ship.clearTint(); });
-        if (this.lives <= 0) this.explodeAndGameOver();
-    }
+   hitAsteroid(ship, asteroid) {
+    asteroid.destroy();
+
+    this.updateScore(-50); // popup automático correto
+
+    this.lives--;
+    this.livesText.setText('❤️'.repeat(Math.max(0, this.lives)));
+
+    this.ship.setTint(0xff0000);
+    this.time.delayedCall(200, () => this.ship.clearTint());
+
+    if (this.lives <= 0) this.explodeAndGameOver();
+}
+
+
+
+avoidAsteroid() {
+    if (!this.gameStarted) return;
+    this.updateScore(10);  
+}
+
+
+
 
     gameOver() {
         this.ship.setVelocityY(300);
         this.time.delayedCall(1500, () => { this.scene.start('GameOverScene'); });
     }
 
-    collectFuel(ship, fuel) {
-        this.ship.setTint(0x00ff00);
-        this.time.delayedCall(200, () => { this.ship.clearTint(); });
-        fuel.destroy();
-        this.fuelLevel += 50;
-        if (this.fuelLevel > 100) this.fuelLevel = 100;
-    }
+   collectFuel(ship, fuel) {
+    this.updateScore(20); // popup correto +20
+
+    this.ship.setTint(0x00ff00);
+    this.time.delayedCall(200, () => this.ship.clearTint());
+
+    fuel.destroy();
+
+    this.fuelLevel += 50;
+    if (this.fuelLevel > 100) this.fuelLevel = 100;
+}
+
+
 
     startGame() {
         this.gameStarted = true;
@@ -273,5 +312,33 @@ export class GameScene extends Phaser.Scene {
         this.fuelBar.fillStyle(color, 1);
         this.fuelBar.fillRect(this.sys.game.config.width - 130, 20, 120 * value, 8);
     }
+
+    updateScore(amount, popup = true) {
+    this.score += amount;
+    if (this.score < 0) this.score = 0;
+
+    this.scoreText.setText('Score: ' + this.score);
+
+    if (popup) {
+        this.showScoreChange(amount, this.ship.x, this.ship.y - 40);
+    }
+}
+
+
+showScoreChange(amount, x, y) {
+    const color = amount >= 0 ? '#0f0' : '#f00';
+
+    let text = this.add.text(x, y, (amount > 0 ? "+" : "") + amount,
+        { fontSize: '16px', fill: color });
+
+    this.tweens.add({
+        targets: text,
+        y: y - 20,
+        alpha: 0,
+        duration: 800,
+        onComplete: () => text.destroy()
+    });
+}
+
 
 }
