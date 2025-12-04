@@ -26,11 +26,18 @@ export class GameScene extends Phaser.Scene {
         this.load.audio('loseSound', 'assets/audio/fire.mp3');
         this.load.audio('backgroundMusic', 'assets/audio/bck.mp3');
 
+        this.load.plugin(
+            'rexvirtualjoystickplugin',
+            'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js',
+            true
+        );
 
 
     }
 
     create() {
+
+        
 
         // Sons
         this.fuelSound = this.sound.add('fuelSound');
@@ -136,6 +143,18 @@ export class GameScene extends Phaser.Scene {
 
         this.progressBar = this.add.graphics();
 
+        // Criar joystick
+        this.joystick = this.plugins.get('rexvirtualjoystickplugin').add(this, {
+            x: width - 100,
+            y: height - 100,
+            radius: 60,
+            base: this.add.circle(0, 0, 60, 0x888888),
+            thumb: this.add.circle(0, 0, 30, 0xcccccc),
+        });
+
+        // Criar cursorKeys a partir do joystick
+        this.cursorKeys = this.joystick.createCursorKeys();
+
 
     }
 
@@ -172,10 +191,14 @@ export class GameScene extends Phaser.Scene {
 
         // Movimento da nave
         if (this.gameStarted) {
-            if (this.cursors.left.isDown) {
+            // --- Controlo da nave (teclado + joystick) ---
+            let movingLeft = this.cursors.left.isDown || this.cursorKeys.left.isDown;
+            let movingRight = this.cursors.right.isDown || this.cursorKeys.right.isDown;
+
+            if (movingLeft) {
                 this.ship.setVelocityX(-200);
                 this.ship.play('turnLeft', true);
-            } else if (this.cursors.right.isDown) {
+            } else if (movingRight) {
                 this.ship.setVelocityX(200);
                 this.ship.play('turnRight', true);
             } else {
@@ -183,7 +206,7 @@ export class GameScene extends Phaser.Scene {
                 this.ship.play('idle', true);
             }
 
-
+            // --- Consumo de combustível ---
             this.fuelLevel -= 0.05;
             if (this.fuelLevel <= 0) {
                 this.fuelLevel = 0;
