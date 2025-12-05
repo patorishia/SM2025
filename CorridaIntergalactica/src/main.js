@@ -1,5 +1,8 @@
 
-import {GameScene} from './scenes/GameScene.js';
+import { GameScene } from './scenes/GameScene.js';
+import { GameOverScene } from './scenes/GameOverScene.js';
+import { WinScene } from './scenes/WinScene.js';
+import { MenuScene } from './scenes/MenuScene.js';
 
 const config = {
     type: Phaser.AUTO,
@@ -15,12 +18,13 @@ const config = {
         arcade: { debug: false }
     },
     scene: [
-        GameScene
+        MenuScene, GameScene, GameOverScene, WinScene
     ],
     scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
+    
 }
 
 new Phaser.Game(config);
