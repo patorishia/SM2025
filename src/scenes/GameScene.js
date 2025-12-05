@@ -37,7 +37,7 @@ export class GameScene extends Phaser.Scene {
 
     create() {
 
-        
+
 
         // Sons
         this.fuelSound = this.sound.add('fuelSound');
@@ -144,17 +144,20 @@ export class GameScene extends Phaser.Scene {
         this.progressBar = this.add.graphics();
 
         // Criar joystick
-        this.joystick = this.plugins.get('rexvirtualjoystickplugin').add(this, {
-            x: width - 100,
-            y: height - 100,
-            radius: 60,
-            base: this.add.circle(0, 0, 60, 0x888888),
-            thumb: this.add.circle(0, 0, 30, 0xcccccc),
-        });
+        if (this.sys.game.device.os.android || this.sys.game.device.os.iOS) {
+            this.joystick = this.plugins.get('rexvirtualjoystickplugin').add(this, {
+                x: width - 100,
+                y: height - 100,
+                radius: 60,
+                base: this.add.circle(0, 0, 60, 0x888888),
+                thumb: this.add.circle(0, 0, 30, 0xcccccc),
+            });
 
-        // Criar cursorKeys a partir do joystick
-        this.cursorKeys = this.joystick.createCursorKeys();
 
+
+            // Criar cursorKeys a partir do joystick
+            this.cursorKeys = this.joystick.createCursorKeys();
+        }
 
     }
 
@@ -192,8 +195,8 @@ export class GameScene extends Phaser.Scene {
         // Movimento da nave
         if (this.gameStarted) {
             // --- Controlo da nave (teclado + joystick) ---
-            let movingLeft = this.cursors.left.isDown || this.cursorKeys.left.isDown;
-            let movingRight = this.cursors.right.isDown || this.cursorKeys.right.isDown;
+            let movingLeft = this.cursors.left.isDown || (this.cursorKeys && this.cursorKeys.left.isDown);
+            let movingRight = this.cursors.right.isDown || (this.cursorKeys && this.cursorKeys.right.isDown);
 
             if (movingLeft) {
                 this.ship.setVelocityX(-200);
