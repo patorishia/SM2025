@@ -117,7 +117,7 @@ export class GameScene extends Phaser.Scene {
         this.livesText = this.add.text(width - 20, 50, '❤️❤️❤️', { fontSize: '16px', fill: '#fff' }).setOrigin(1, 0);
 
         // Texto inicial
-        this.startText = this.add.text(240, 360, 'Clique para começar', { fontSize: '24px', fill: '#fff' }).setOrigin(0.5);
+        this.startText = this.add.text(240, 360, 'Tap to Start', { fontSize: '24px', fill: '#fff' }).setOrigin(0.5);
         this.gameStarted = false;
 
         this.input.once('pointerdown', () => this.startCountdown());
