@@ -1,0 +1,31 @@
+[33m6b75366[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m Revert "Reapply "ajuste de pastas""
+[33m2e40ada[m Reapply "Reapply "ajuste de pastas""
+[33m0522b48[m Reapply "Reapply "ajuste de pastas""
+[33md4b42ca[m Revert "Reapply "ajuste de pastas""
+[33m43066e7[m Reapply "ajuste de pastas"
+[33m6056ea3[m Revert "Reapply "ajuste de pastas""
+[33m01d5700[m Revert "Reapply "ajuste de pastas""
+[33m9e8f668[m Reapply "ajuste de pastas"
+[33m5a02525[m Reapply "ajuste de pastas"
+[33m2b10e28[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Revert "ajuste de pastas"
+[33m904ad81[m Revert "ajuste de pastas"
+[33m0cf5c4a[m ajuste de pastas
+[33mca7edf2[m ajuste de pastas
+[33m6acd9d4[m Revert "Ajuste pastas e add relatorios e video demonstrativo"
+[33mdf81563[m Ajuste pastas e add relatorios e video demonstrativo
+[33m845aa98[m Ajustes background
+[33m7ee83c5[m Ajustes Readme
+[33m891e65e[m Ajustes finais
+[33m37d923f[m Correcao da merge
+[33mdeb9c29[m Merge branch 'feature-endgame'
+[33m5ee5008[m[33m ([m[1;31morigin/feature-endgame[m[33m, [m[1;32mfeature-endgame[m[33m)[m JoyStick so aparece quando é mobile
+[33m902e27f[m Criar Joystick
+[33m24952ba[m Ajuste das Scenes: GameOver,Win,Menu
+[33mfa39e18[m  GameOverScene e WinScene
+[33mf72798d[m[33m ([m[1;31morigin/feature-score[m[33m, [m[1;32mfeature-score[m[33m)[m Criar o sistema de pontuacao
+[33m1a82124[m[33m ([m[1;31morigin/feature-hud[m[33m, [m[1;32mfeature-hud[m[33m)[m Organizar HUD, criar progress bar,timer e score
+[33m3ba8507[m[33m ([m[1;31morigin/feature-fuel[m[33m, [m[1;32mfeature-fuel[m[33m)[m Implementacao fuel system, finish line e  countdown inicial
+[33m9e2a0ee[m  adicionar asteroides animados com spawn controlado
+[33m14c49b9[m Atualizar lógica da nave: movimento lateral + animações
+[33m9d07313[m Initial commit
+[33mecb4b3c[m Initial commit
