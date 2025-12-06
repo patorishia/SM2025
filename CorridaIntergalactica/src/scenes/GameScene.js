@@ -278,22 +278,21 @@ export class GameScene extends Phaser.Scene {
     }
 
     startGame() {
-        this.gameStarted = true;
+    this.tweens.add({
+        targets: this.ship,
+        y: 360,
+        duration: 2000,
+        ease: 'Power2',
+        onComplete: () => {
+            this.gameStarted = true;
+            this.backgroundMoving = true;
+            this.asteroidTimer.paused = false;
+            this.fuelTimer.paused = false;
+            this.backgroundMusic.play();
+        }
+    });
+}
 
-        this.tweens.add({
-            targets: this.ship,
-            y: 360,
-            duration: 2000,
-            ease: 'Power2',
-            onComplete: () => {
-                this.backgroundMoving = true;
-                this.asteroidTimer.paused = false;
-                this.fuelTimer.paused = false;
-                this.backgroundMusic.play();
-
-            }
-        });
-    }
 
     hitAsteroid(ship, asteroid) {
         asteroid.destroy();

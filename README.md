@@ -5,7 +5,7 @@ O objetivo é controlar uma nave espacial, evitar obstáculos e gerir o combust�
 
 ---
 
-## Funcionalidades (Requisitos mínimos)
+## Funcionalidades
 
 - Menu inicial com instruções de jogo  
 - Sistema de pontuação e tempo  
